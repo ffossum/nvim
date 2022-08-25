@@ -6,9 +6,21 @@ if fn.empty(fn.glob(install_path)) > 0 then
     vim.cmd "packadd packer.nvim"
 end
 
+-- Functional wrapper for mapping custom keybindings
+function map(mode, lhs, rhs, opts)
+    local options = {
+        noremap = true
+    }
+    if opts then
+        options = vim.tbl_extend("force", options, opts)
+    end
+    vim.api.nvim_set_keymap(mode, lhs, rhs, options)
+end
+
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.mouse = 'a'
+vim.g.mapleader = ' '
 
 return require('packer').startup(function(use)
 
@@ -19,8 +31,14 @@ return require('packer').startup(function(use)
         requires = {'kyazdani42/nvim-web-devicons'},
         tag = 'nightly'
     }
+    require("nvim-tree").setup()
+    map("n", "<C-n>", "<cmd> NvimTreeToggle <CR>")
 
     use 'navarasu/onedark.nvim'
+    require('onedark').setup {
+        style = "cool"
+    }
+    require('onedark').load()
 
     use {
         'romgrk/barbar.nvim',
@@ -28,20 +46,48 @@ return require('packer').startup(function(use)
     }
 
     use {
-        'feline-nvim/feline.nvim',
-        requires = {'kyazdani42/nvim-web-devicons', 'lewis6991/gitsigns.nvim'}
+        'nvim-lualine/lualine.nvim',
+        requires = {
+            'kyazdani42/nvim-web-devicons',
+            opt = true
+        }
+    }
+    require('lualine').setup()
+    vim.opt.laststatus = 3 -- global statusline
+
+    use {
+        'nvim-treesitter/nvim-treesitter',
+        run = ':TSUpdate'
     }
 
-    if packer_bootstrap then
-        require('packer').sync()
-    end
-
-    require("nvim-tree").setup()
-
-    require('onedark').setup {
-        style = "cool"
+    use {
+        'nvim-telescope/telescope-fzf-native.nvim',
+        run = 'make'
     }
-    require('onedark').load()
+    use {
+        'nvim-telescope/telescope.nvim',
+        branch = '0.1.x',
+        requires = {'nvim-lua/plenary.nvim'}
+    }
+    map("n", "<leader>ff", "<cmd>Telescope find_files<cr>")
+    map("n", "<leader>fg", "<cmd>Telescope live_grep<cr>")
+    map("n", "<leader>fb", "<cmd>Telescope buffers<cr>")
+    map("n", "<leader>fh", "<cmd>Telescope help_tags<cr>")
 
-    require('feline').setup()
+    use {
+        'lewis6991/gitsigns.nvim',
+        tag = 'release'
+    }
+    require('gitsigns').setup()
+
+    use {
+        "akinsho/toggleterm.nvim",
+        tag = 'v2.*'
+    }
+    require("toggleterm").setup {
+        direction = "float"
+    }
+    map("n", "<leader>t", "<cmd>ToggleTerm<cr>")
+    map("t", "<Esc>", "<cmd>ToggleTerm<cr>")
+
 end)
