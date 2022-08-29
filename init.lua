@@ -35,15 +35,16 @@ return require('packer').startup(function(use)
     map("n", "<C-n>", "<cmd> NvimTreeToggle <CR>")
 
     use 'navarasu/onedark.nvim'
-    require('onedark').setup {
-        style = "cool"
-    }
+    require('onedark').setup()
     require('onedark').load()
 
     use {
         'romgrk/barbar.nvim',
         requires = {'kyazdani42/nvim-web-devicons'}
     }
+    map("n", "<leader>x", "<cmd>BufferClose<cr>")
+    map("n", "<Tab>", "<cmd>BufferNext<cr>")
+    map("n", "<S-Tab>", "<cmd>BufferPrevious<cr>")
 
     use {
         'nvim-lualine/lualine.nvim',
@@ -85,10 +86,42 @@ return require('packer').startup(function(use)
         tag = 'v2.*'
     }
     require("toggleterm").setup {
-        direction = "float"
+        size = 40,
+        direction = "horizontal",
+        open_mapping = [[<c-@>]]
     }
-    map("n", "<leader>t", "<cmd>ToggleTerm<cr>")
-    map("t", "<Esc>", "<cmd>ToggleTerm<cr>")
+    map("t", "<Esc>", "<C-\\><C-n>") -- enter normal mode
+
+    use({
+        "hrsh7th/nvim-cmp",
+        requires = {{"hrsh7th/cmp-nvim-lsp"}, {"hrsh7th/cmp-vsnip"}, {"hrsh7th/vim-vsnip"}}
+    })
+
+    -- completion related settings
+    -- This is similiar to what I use
+    local cmp = require("cmp")
+    cmp.setup({
+        sources = {{
+            name = "nvim_lsp"
+        }, {
+            name = "vsnip"
+        }},
+        snippet = {
+            expand = function(args)
+                -- Comes from vsnip
+                vim.fn["vsnip#anonymous"](args.body)
+            end
+        },
+        mapping = cmp.mapping.preset.insert({
+            -- None of this made sense to me when first looking into this since there
+            -- is no vim docs, but you can't have select = true here _unless_ you are
+            -- also using the snippet stuff. So keep in mind that if you remove
+            -- snippets you need to remove this select
+            ["<CR>"] = cmp.mapping.confirm({
+                select = true
+            })
+        })
+    })
 
     use({
         "scalameta/nvim-metals",
@@ -104,6 +137,10 @@ return require('packer').startup(function(use)
     -- docs about this
     -- metals_config.init_options.statusBarProvider = "on"
 
+    -- Example if you are using cmp how to make sure the correct capabilities for snippets are set
+    local capabilities = vim.lsp.protocol.make_client_capabilities()
+    metals_config.capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
+
     local nvim_metals_group = vim.api.nvim_create_augroup("nvim-metals", {
         clear = true
     })
@@ -118,6 +155,34 @@ return require('packer').startup(function(use)
         group = nvim_metals_group
     })
     map("n", "<leader>mc", '<cmd>lua require"telescope".extensions.metals.commands()<cr>')
-    map('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>')
+    map("n", "<leader>mo", '<cmd>MetalsOrganizeImports<cr>')
+
+    -- LSP config
+    -- Enable completion triggered by <c-x><c-o>
+    vim.api.nvim_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+    -- Mappings.
+    -- See `:help vim.lsp.*` for documentation on any of the below functions
+    local bufopts = {
+        noremap = true,
+        silent = true
+    }
+    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
+    vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
+    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
+    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
+    vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, bufopts)
+    vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
+    vim.keymap.set('n', '<leader>wl', function()
+        print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+    end, bufopts)
+    vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, bufopts)
+    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, bufopts)
+    vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, bufopts)
+    vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
+    vim.keymap.set('n', 'F', vim.lsp.buf.formatting, bufopts)
+    vim.keymap.set("n", "<leader>cl", vim.lsp.codelens.run, bufopts)
+    vim.keymap.set("n", "<leader>sh", vim.lsp.buf.signature_help, bufopts)
 
 end)
