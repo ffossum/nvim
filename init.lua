@@ -17,6 +17,8 @@ function map(mode, lhs, rhs, opts)
     vim.api.nvim_set_keymap(mode, lhs, rhs, options)
 end
 
+vim.opt_global.completeopt = {"menuone", "noinsert", "noselect"}
+
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.mouse = 'a'
@@ -34,9 +36,12 @@ return require('packer').startup(function(use)
     require("nvim-tree").setup {
         view = {
             adaptive_size = true
+        },
+        renderer = {
+            group_empty = true
         }
     }
-    map("n", "<C-n>", "<cmd> NvimTreeToggle <CR>")
+    map("n", "<C-n>", "<cmd> NvimTreeFocus <CR>")
     map("n", "<Esc>", "<cmd> :noh <CR>")
 
     use 'navarasu/onedark.nvim'
@@ -148,7 +153,13 @@ return require('packer').startup(function(use)
             ["<CR>"] = cmp.mapping.confirm({
                 select = true
             })
-        })
+        }),
+        formatting = {
+            format = function(entry, vim_item)
+                vim_item.abbr = string.sub(vim_item.abbr, 1, 40) -- set max width
+                return vim_item
+            end
+        }
     })
 
     use({
