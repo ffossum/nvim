@@ -19,6 +19,7 @@ end
 
 vim.opt_global.completeopt = {"menuone", "noinsert", "noselect"}
 
+vim.o.guifont = "JetBrainsMonoNL Nerd Font"
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.mouse = 'a'
