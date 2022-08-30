@@ -119,10 +119,11 @@ return require('packer').startup(function(use)
         "akinsho/toggleterm.nvim",
         tag = 'v2.*'
     }
+
     require("toggleterm").setup {
         size = 40,
         direction = "horizontal",
-        open_mapping = [[<c-@>]]
+        open_mapping = vim.fn.has('macunix') ~= 0 and "<c-@>" or "<c-'>"
     }
     map("t", "<Esc>", "<C-\\><C-n>") -- enter normal mode
 
