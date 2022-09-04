@@ -19,7 +19,7 @@ end
 
 vim.opt_global.completeopt = {"menuone", "noinsert", "noselect"}
 
-vim.o.guifont = "JetBrainsMonoNL Nerd Font"
+vim.o.guifont = "JetBrainsMonoNL Nerd Font:h10"
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.mouse = 'a'
@@ -39,7 +39,8 @@ return require('packer').startup(function(use)
             adaptive_size = true
         },
         renderer = {
-            group_empty = true
+            group_empty = true,
+            symlink_destination = false
         }
     }
     map("n", "<C-n>", "<cmd> NvimTreeFocus <CR>")
@@ -123,9 +124,18 @@ return require('packer').startup(function(use)
     require("toggleterm").setup {
         size = 40,
         direction = "horizontal",
-        open_mapping = vim.fn.has('macunix') ~= 0 and "<c-@>" or "<c-'>"
+        open_mapping = "<c-\\>"
     }
     map("t", "<Esc>", "<C-\\><C-n>") -- enter normal mode
+    vim.keymap.set('t', '<C-h>', [[<Cmd>wincmd h<CR>]], opts)
+    vim.keymap.set('t', '<C-j>', [[<Cmd>wincmd j<CR>]], opts)
+    vim.keymap.set('t', '<C-k>', [[<Cmd>wincmd k<CR>]], opts)
+    vim.keymap.set('t', '<C-l>', [[<Cmd>wincmd l<CR>]], opts)
+
+    vim.keymap.set('n', '<C-h>', [[<Cmd>wincmd h<CR>]], opts)
+    vim.keymap.set('n', '<C-j>', [[<Cmd>wincmd j<CR>]], opts)
+    vim.keymap.set('n', '<C-k>', [[<Cmd>wincmd k<CR>]], opts)
+    vim.keymap.set('n', '<C-l>', [[<Cmd>wincmd l<CR>]], opts)
 
     use({
         "hrsh7th/nvim-cmp",
