@@ -41,6 +41,7 @@ return require('packer').startup(function(use)
         tag = 'nightly'
     }
     require("nvim-tree").setup {
+        open_on_setup = true,
         view = {
             adaptive_size = true
         },
@@ -123,6 +124,23 @@ return require('packer').startup(function(use)
     require('gitsigns').setup()
 
     use "lukas-reineke/indent-blankline.nvim"
+
+    use {
+        'numToStr/Comment.nvim',
+        config = function()
+            require('Comment').setup()
+        end
+    }
+
+    use({
+        "kylechui/nvim-surround",
+        tag = "*", -- Use for stability; omit to use `main` branch for the latest features
+        config = function()
+            require("nvim-surround").setup({
+                -- Configuration here, or leave empty to use defaults
+            })
+        end
+    })
 
     use {
         "akinsho/toggleterm.nvim",
@@ -248,3 +266,4 @@ return require('packer').startup(function(use)
     vim.keymap.set("n", "<leader>sh", vim.lsp.buf.signature_help, bufopts)
 
 end)
+
