@@ -24,6 +24,7 @@ vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.mouse = 'a'
 vim.g.mapleader = ' '
+vim.opt.clipboard = "unnamedplus" -- yank/paste to system clipboard
 
 return require('packer').startup(function(use)
 
@@ -43,7 +44,7 @@ return require('packer').startup(function(use)
             symlink_destination = false
         }
     }
-    map("n", "<C-n>", "<cmd> NvimTreeFocus <CR>")
+    map("n", "<C-`>", "<cmd> NvimTreeFocus <CR> <cmd> NvimTreeRefresh <CR>")
     map("n", "<Esc>", "<cmd> :noh <CR>")
 
     use 'navarasu/onedark.nvim'
