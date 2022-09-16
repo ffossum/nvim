@@ -22,6 +22,11 @@ vim.opt_global.completeopt = {"menuone", "noinsert", "noselect"}
 vim.o.guifont = "JetBrainsMonoNL Nerd Font:h10"
 vim.opt.number = true
 vim.opt.relativenumber = true
+
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
+vim.opt.expandtab = true
+
 vim.opt.mouse = 'a'
 vim.g.mapleader = ' '
 vim.opt.clipboard = "unnamedplus" -- yank/paste to system clipboard
@@ -116,6 +121,8 @@ return require('packer').startup(function(use)
         tag = 'release'
     }
     require('gitsigns').setup()
+
+    use "lukas-reineke/indent-blankline.nvim"
 
     use {
         "akinsho/toggleterm.nvim",
