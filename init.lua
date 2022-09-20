@@ -21,7 +21,9 @@ vim.opt_global.completeopt = {"menuone", "noinsert", "noselect"}
 
 vim.o.guifont = "JetBrainsMonoNL Nerd Font:h10"
 vim.opt.number = true
-vim.opt.relativenumber = true
+vim.opt.relativenumber = false
+vim.cmd [[autocmd BufEnter * exec &number==1 ? "set relativenumber" : ""]]
+vim.cmd [[autocmd BufLeave * set norelativenumber]]
 
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
@@ -148,7 +150,7 @@ return require('packer').startup(function(use)
     }
 
     require("toggleterm").setup {
-        size = 40,
+        size = 32,
         direction = "horizontal",
         open_mapping = "<c-\\>"
     }
