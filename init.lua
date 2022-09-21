@@ -40,24 +40,30 @@ return require('packer').startup(function(use)
     use {
         'kyazdani42/nvim-tree.lua',
         requires = {'kyazdani42/nvim-web-devicons'},
-        tag = 'nightly'
-    }
-    require("nvim-tree").setup {
-        open_on_setup = true,
-        view = {
-            adaptive_size = true
-        },
-        renderer = {
-            group_empty = true,
-            symlink_destination = false
-        }
+        tag = 'nightly',
+        config = function()
+            require("nvim-tree").setup {
+                open_on_setup = true,
+                view = {
+                    adaptive_size = true
+                },
+                renderer = {
+                    group_empty = true,
+                    symlink_destination = false
+                }
+            }
+        end
     }
     map("n", "<C-`>", "<cmd> NvimTreeFocus <CR> <cmd> NvimTreeRefresh <CR>")
     map("n", "<Esc>", "<cmd> :noh <CR>")
 
-    use 'navarasu/onedark.nvim'
-    require('onedark').setup()
-    require('onedark').load()
+    use {
+        'navarasu/onedark.nvim',
+        config = function()
+            require('onedark').setup()
+            require('onedark').load()
+        end
+    }
 
     use {
         'romgrk/barbar.nvim',
@@ -67,43 +73,48 @@ return require('packer').startup(function(use)
     map("n", "<Tab>", "<cmd>BufferNext<cr>")
     map("n", "<S-Tab>", "<cmd>BufferPrevious<cr>")
 
+    vim.opt.laststatus = 3 -- global statusline
     use {
         'nvim-lualine/lualine.nvim',
         requires = {
             'kyazdani42/nvim-web-devicons',
             opt = true
-        }
+        },
+        config = function()
+            require('lualine').setup()
+        end
     }
-    require('lualine').setup()
-    vim.opt.laststatus = 3 -- global statusline
 
     use {
         'nvim-treesitter/nvim-treesitter',
-        run = ':TSUpdate'
+        run = ':TSUpdate',
+        config = function()
+
+            require'nvim-treesitter.configs'.setup {
+                highlight = {
+                    enable = true,
+                    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+                    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+                    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+                    -- Instead of true it can also be a list of languages
+                    additional_vim_regex_highlighting = false
+                },
+                rainbow = {
+                    enable = true,
+                    -- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for
+                    extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
+                    max_file_lines = nil -- Do not enable for files with more than n lines, int
+                    -- colors = {}, -- table of hex strings
+                    -- termcolors = {} -- table of colour name strings
+                }
+            }
+        end
     }
     use {
         'p00f/nvim-ts-rainbow',
         requires = {'nvim-treesitter/nvim-treesitter'}
     }
 
-    require'nvim-treesitter.configs'.setup {
-        highlight = {
-            enable = true,
-            -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-            -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-            -- Using this option may slow down your editor, and you may see some duplicate highlights.
-            -- Instead of true it can also be a list of languages
-            additional_vim_regex_highlighting = false
-        },
-        rainbow = {
-            enable = true,
-            -- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for
-            extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
-            max_file_lines = nil -- Do not enable for files with more than n lines, int
-            -- colors = {}, -- table of hex strings
-            -- termcolors = {} -- table of colour name strings
-        }
-    }
 
     use {
         'nvim-telescope/telescope-fzf-native.nvim',
@@ -121,9 +132,11 @@ return require('packer').startup(function(use)
 
     use {
         'lewis6991/gitsigns.nvim',
-        tag = 'release'
+        tag = 'release',
+        config = function()
+            require('gitsigns').setup()
+        end
     }
-    require('gitsigns').setup()
 
     use "lukas-reineke/indent-blankline.nvim"
 
@@ -146,14 +159,16 @@ return require('packer').startup(function(use)
 
     use {
         "akinsho/toggleterm.nvim",
-        tag = 'v2.*'
+        tag = 'v2.*',
+        config = function()
+            require("toggleterm").setup {
+                size = 32,
+                direction = "horizontal",
+                open_mapping = "<c-\\>"
+            }
+        end
     }
 
-    require("toggleterm").setup {
-        size = 32,
-        direction = "horizontal",
-        open_mapping = "<c-\\>"
-    }
     map("t", "<Esc>", "<C-\\><C-n>") -- enter normal mode
     vim.keymap.set('t', '<C-h>', [[<Cmd>wincmd h<CR>]], opts)
     vim.keymap.set('t', '<C-j>', [[<Cmd>wincmd j<CR>]], opts)
@@ -167,40 +182,42 @@ return require('packer').startup(function(use)
 
     use({
         "hrsh7th/nvim-cmp",
-        requires = {{"hrsh7th/cmp-nvim-lsp"}, {"hrsh7th/cmp-vsnip"}, {"hrsh7th/vim-vsnip"}}
+        requires = {{"hrsh7th/cmp-nvim-lsp"}, {"hrsh7th/cmp-vsnip"}, {"hrsh7th/vim-vsnip"}},
+        config = function()
+            local cmp = require("cmp")
+            cmp.setup({
+                sources = {{
+                    name = "nvim_lsp"
+                }, {
+                    name = "vsnip"
+                }},
+                snippet = {
+                    expand = function(args)
+                        -- Comes from vsnip
+                        vim.fn["vsnip#anonymous"](args.body)
+                    end
+                },
+                mapping = cmp.mapping.preset.insert({
+                    -- None of this made sense to me when first looking into this since there
+                    -- is no vim docs, but you can't have select = true here _unless_ you are
+                    -- also using the snippet stuff. So keep in mind that if you remove
+                    -- snippets you need to remove this select
+                    ["<CR>"] = cmp.mapping.confirm({
+                        select = true
+                    })
+                }),
+                formatting = {
+                    format = function(entry, vim_item)
+                        vim_item.abbr = string.sub(vim_item.abbr, 1, 40) -- set max width
+                        return vim_item
+                    end
+                }
+            })
+        end
     })
 
     -- completion related settings
     -- This is similiar to what I use
-    local cmp = require("cmp")
-    cmp.setup({
-        sources = {{
-            name = "nvim_lsp"
-        }, {
-            name = "vsnip"
-        }},
-        snippet = {
-            expand = function(args)
-                -- Comes from vsnip
-                vim.fn["vsnip#anonymous"](args.body)
-            end
-        },
-        mapping = cmp.mapping.preset.insert({
-            -- None of this made sense to me when first looking into this since there
-            -- is no vim docs, but you can't have select = true here _unless_ you are
-            -- also using the snippet stuff. So keep in mind that if you remove
-            -- snippets you need to remove this select
-            ["<CR>"] = cmp.mapping.confirm({
-                select = true
-            })
-        }),
-        formatting = {
-            format = function(entry, vim_item)
-                vim_item.abbr = string.sub(vim_item.abbr, 1, 40) -- set max width
-                return vim_item
-            end
-        }
-    })
 
     use({
         "scalameta/nvim-metals",
