@@ -168,22 +168,24 @@ return require('packer').startup(function(use)
         config = function()
             require("toggleterm").setup {
                 size = 32,
-                direction = "horizontal",
+                direction = "float",
                 open_mapping = "<c-\\>"
             }
         end
     }
 
-    map("t", "<Esc>", "<C-\\><C-n>") -- enter normal mode
-    vim.keymap.set('t', '<C-h>', [[<Cmd>wincmd h<CR>]], opts)
-    vim.keymap.set('t', '<C-j>', [[<Cmd>wincmd j<CR>]], opts)
-    vim.keymap.set('t', '<C-k>', [[<Cmd>wincmd k<CR>]], opts)
-    vim.keymap.set('t', '<C-l>', [[<Cmd>wincmd l<CR>]], opts)
+    map("t", "<Esc>", [[<C-\><C-n>]]) -- enter normal mode
+    map('t', '<C-h>', [[<Cmd>wincmd h<CR>]])
+    map('t', '<C-j>', [[<Cmd>wincmd j<CR>]])
+    map('t', '<C-k>', [[<Cmd>wincmd k<CR>]])
+    map('t', '<C-l>', [[<Cmd>wincmd l<CR>]])
+    map('t', '<C-p>', [[<Up>]])
+    map('t', '<C-n>', [[<Down>]])
 
-    vim.keymap.set('n', '<C-h>', [[<Cmd>wincmd h<CR>]], opts)
-    vim.keymap.set('n', '<C-j>', [[<Cmd>wincmd j<CR>]], opts)
-    vim.keymap.set('n', '<C-k>', [[<Cmd>wincmd k<CR>]], opts)
-    vim.keymap.set('n', '<C-l>', [[<Cmd>wincmd l<CR>]], opts)
+    map('n', '<C-h>', [[<Cmd>wincmd h<CR>]])
+    map('n', '<C-j>', [[<Cmd>wincmd j<CR>]])
+    map('n', '<C-k>', [[<Cmd>wincmd k<CR>]])
+    map('n', '<C-l>', [[<Cmd>wincmd l<CR>]])
 
     use({
         "hrsh7th/nvim-cmp",
