@@ -168,8 +168,8 @@ return require('packer').startup(function(use)
         config = function()
             require("toggleterm").setup {
                 size = 32,
-                direction = "float",
-                open_mapping = "<c-\\>"
+                direction = "horizontal",
+                open_mapping = [[<c-\>]]
             }
         end
     }
@@ -181,7 +181,11 @@ return require('packer').startup(function(use)
     map('t', '<C-l>', [[<Cmd>wincmd l<CR>]])
     map('t', '<C-p>', [[<Up>]])
     map('t', '<C-n>', [[<Down>]])
+    map('t', '<C-f>', [[<Right>]])
+    map('t', '<C-b>', [[<Left>]])
 
+    map('t', [[<C-S-\>]], [[<Cmd>ToggleTermToggleAll<CR>]])
+    map('n', [[<C-S-\>]], [[<Cmd>ToggleTermToggleAll<CR>]])
     map('n', '<C-h>', [[<Cmd>wincmd h<CR>]])
     map('n', '<C-j>', [[<Cmd>wincmd j<CR>]])
     map('n', '<C-k>', [[<Cmd>wincmd k<CR>]])
@@ -274,7 +278,6 @@ return require('packer').startup(function(use)
     vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
     vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
     vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
-    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
     vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, bufopts)
     vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
     vim.keymap.set('n', '<leader>wl', function()
