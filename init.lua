@@ -167,7 +167,8 @@ return require('packer').startup(function(use)
         tag = 'v2.*',
         config = function()
             require("toggleterm").setup {
-                size = 32,
+                size = 24,
+                persist_size = false,
                 direction = "horizontal",
                 open_mapping = [[<c-\>]]
             }
@@ -181,8 +182,6 @@ return require('packer').startup(function(use)
     map('t', '<C-l>', [[<Cmd>wincmd l<CR>]])
     map('t', '<C-p>', [[<Up>]])
     map('t', '<C-n>', [[<Down>]])
-    map('t', '<C-f>', [[<Right>]])
-    map('t', '<C-b>', [[<Left>]])
 
     map('t', [[<C-S-\>]], [[<Cmd>ToggleTermToggleAll<CR>]])
     map('n', [[<C-S-\>]], [[<Cmd>ToggleTermToggleAll<CR>]])
