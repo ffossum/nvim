@@ -69,7 +69,6 @@ return require('packer').startup(function(use)
         'romgrk/barbar.nvim',
         requires = {'kyazdani42/nvim-web-devicons'}
     }
-    map("n", "<leader>x", "<cmd>BufferClose<cr>")
     map("n", "<Tab>", "<cmd>BufferNext<cr>")
     map("n", "<S-Tab>", "<cmd>BufferPrevious<cr>")
 
@@ -190,7 +189,26 @@ return require('packer').startup(function(use)
     map('n', '<C-k>', [[<Cmd>wincmd k<CR>]])
     map('n', '<C-l>', [[<Cmd>wincmd l<CR>]])
 
-    use({
+    use {
+        "folke/trouble.nvim",
+        requires = "kyazdani42/nvim-web-devicons",
+        config = function()
+            require("trouble").setup {
+                -- your configuration comes here
+                -- or leave it empty to use the default settings
+                -- refer to the configuration section below
+            }
+
+            vim.keymap.set("n", "<leader>xx", "<cmd>TroubleToggle<cr>", {silent = true, noremap = true})
+            vim.keymap.set("n", "<leader>xw", "<cmd>TroubleToggle workspace_diagnostics<cr>", {silent = true, noremap = true})
+            vim.keymap.set("n", "<leader>xd", "<cmd>TroubleToggle document_diagnostics<cr>", {silent = true, noremap = true})
+            vim.keymap.set("n", "<leader>xl", "<cmd>TroubleToggle loclist<cr>", {silent = true, noremap = true})
+            vim.keymap.set("n", "<leader>xq", "<cmd>TroubleToggle quickfix<cr>", {silent = true, noremap = true})
+            vim.keymap.set("n", "gR", "<cmd>TroubleToggle lsp_references<cr>", {silent = true, noremap = true})
+        end
+    }
+
+    use {
         "hrsh7th/nvim-cmp",
         requires = {{"hrsh7th/cmp-nvim-lsp"}, {"hrsh7th/cmp-vsnip"}, {"hrsh7th/vim-vsnip"}},
         config = function()
@@ -224,7 +242,7 @@ return require('packer').startup(function(use)
                 }
             })
         end
-    })
+    }
 
     -- completion related settings
     -- This is similiar to what I use
@@ -285,9 +303,6 @@ return require('packer').startup(function(use)
     vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, bufopts)
     vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, bufopts)
     vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, bufopts)
-    map("n", "<leader>aa", [[<cmd>lua vim.diagnostic.setqflist()<CR>]]) -- all workspace diagnostics
-    map("n", "<leader>ae", [[<cmd>lua vim.diagnostic.setqflist({severity = "E"})<CR>]]) -- all workspace errors
-    map("n", "<leader>aw", [[<cmd>lua vim.diagnostic.setqflist({severity = "W"})<CR>]]) -- all workspace warnings
     vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
     vim.keymap.set('n', 'F', vim.lsp.buf.formatting, bufopts)
     vim.keymap.set("n", "<leader>cl", vim.lsp.codelens.run, bufopts)
