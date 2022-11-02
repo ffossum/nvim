@@ -136,7 +136,7 @@ return require('packer').startup(function(use)
 
     use {
         'lewis6991/gitsigns.nvim',
-        tag = 'release',
+        tag = 'v0.5',
         config = function()
             require('gitsigns').setup()
         end
@@ -251,7 +251,7 @@ return require('packer').startup(function(use)
         "scalameta/nvim-metals",
         requires = {"nvim-lua/plenary.nvim"}
     })
-    vim.opt_global.shortmess:remove("F"):append("c")
+
     local metals_config = require("metals").bare_config()
 
     -- *READ THIS*
@@ -262,8 +262,7 @@ return require('packer').startup(function(use)
     metals_config.init_options.statusBarProvider = "on"
 
     -- Example if you are using cmp how to make sure the correct capabilities for snippets are set
-    local capabilities = vim.lsp.protocol.make_client_capabilities()
-    metals_config.capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
+    metals_config.capabilities = require("cmp_nvim_lsp").default_capabilities()
 
     local nvim_metals_group = vim.api.nvim_create_augroup("nvim-metals", {
         clear = true
