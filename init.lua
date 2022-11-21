@@ -71,6 +71,7 @@ return require('packer').startup(function(use)
     }
     map("n", "<Tab>", "<cmd>BufferNext<cr>")
     map("n", "<S-Tab>", "<cmd>BufferPrevious<cr>")
+    map("n", "<leader>bc", "<cmd>BufferClose<cr>")
 
     vim.opt.laststatus = 3 -- global statusline
     use {
@@ -306,6 +307,17 @@ return require('packer').startup(function(use)
     vim.keymap.set('n', 'F', vim.lsp.buf.formatting, bufopts)
     vim.keymap.set("n", "<leader>cl", vim.lsp.codelens.run, bufopts)
     vim.keymap.set("n", "<leader>sh", vim.lsp.buf.signature_help, bufopts)
+
+    use {
+        'neovim/nvim-lspconfig',
+        config = function()
+            local nvim_lsp = require 'lspconfig'
+            -- typescript
+            nvim_lsp.tsserver.setup{}
+
+            nvim_lsp.svelte.setup{}
+        end
+    }
 
 end)
 
