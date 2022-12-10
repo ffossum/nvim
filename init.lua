@@ -312,10 +312,10 @@ return require('packer').startup(function(use)
         'neovim/nvim-lspconfig',
         config = function()
             local nvim_lsp = require 'lspconfig'
-            -- typescript
-            nvim_lsp.tsserver.setup{}
 
+            nvim_lsp.tsserver.setup{} -- typescript
             nvim_lsp.svelte.setup{}
+            nvim_lsp.rust_analyzer.setup{}
         end
     }
 
