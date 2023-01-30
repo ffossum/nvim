@@ -58,10 +58,12 @@ return require('packer').startup(function(use)
     map("n", "<Esc>", "<cmd> :noh <CR>")
 
     use {
-        'navarasu/onedark.nvim',
+        'sainnhe/edge',
         config = function()
-            require('onedark').setup()
-            require('onedark').load()
+            vim.o.termguicolors = true
+            vim.g.edge_style = 'aura'
+            vim.g.edge_better_performance = 1
+            vim.cmd('colorscheme edge')
         end
     }
 
@@ -304,7 +306,7 @@ return require('packer').startup(function(use)
     vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, bufopts)
     vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, bufopts)
     vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
-    vim.keymap.set('n', 'F', vim.lsp.buf.formatting, bufopts)
+    vim.keymap.set('n', 'F', function () vim.lsp.buf.format { async = true } end, bufopts)
     vim.keymap.set("n", "<leader>cl", vim.lsp.codelens.run, bufopts)
     vim.keymap.set("n", "<leader>sh", vim.lsp.buf.signature_help, bufopts)
 
