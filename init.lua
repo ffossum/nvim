@@ -1,8 +1,7 @@
-local fn = vim.fn
-local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
-if fn.empty(fn.glob(install_path)) > 0 then
-    packer_bootstrap = fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim',
-                                  install_path})
+local install_path = vim.fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
+if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
+    packer_bootstrap = vim.fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim',
+                                      install_path})
     vim.cmd "packadd packer.nvim"
 end
 
@@ -19,7 +18,7 @@ end
 
 vim.opt_global.completeopt = {"menuone", "noinsert", "noselect"}
 
-vim.o.guifont = "JetBrainsMonoNL Nerd Font:h10"
+vim.o.guifont = "JetBrainsMonoNL Nerd Font:h13"
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.cmd [[autocmd WinEnter * exec &number==1 ? "set relativenumber" : ""]]
@@ -54,6 +53,7 @@ return require('packer').startup(function(use)
             }
         end
     }
+    map("n", "<leader>tf", "<cmd>NvimTreeFindFile<CR>")
     map("n", "<C-`>", "<cmd> NvimTreeFocus <CR> <cmd> NvimTreeRefresh <CR>")
     map("n", "<Esc>", "<cmd> :noh <CR>")
 
@@ -88,7 +88,7 @@ return require('packer').startup(function(use)
     end
     require('lualine').setup {
         sections = {
-            lualine_b = { 'branch', 'diff', 'diagnostics', metals_status }
+            lualine_b = {'branch', 'diff', 'diagnostics', metals_status}
         }
     }
 
@@ -121,7 +121,6 @@ return require('packer').startup(function(use)
         'p00f/nvim-ts-rainbow',
         requires = {'nvim-treesitter/nvim-treesitter'}
     }
-
 
     use {
         'nvim-telescope/telescope-fzf-native.nvim',
@@ -173,6 +172,14 @@ return require('packer').startup(function(use)
     }
 
     use {
+        "ggandor/leap.nvim",
+        requires = 'tpope/vim-repeat',
+        config = function()
+            require('leap').add_default_mappings()
+        end
+    }
+
+    use {
         "akinsho/toggleterm.nvim",
         tag = 'v2.*',
         config = function()
@@ -210,12 +217,17 @@ return require('packer').startup(function(use)
                 -- refer to the configuration section below
             }
 
-            vim.keymap.set("n", "<leader>xx", "<cmd>TroubleToggle<cr>", {silent = true, noremap = true})
-            vim.keymap.set("n", "<leader>xw", "<cmd>TroubleToggle workspace_diagnostics<cr>", {silent = true, noremap = true})
-            vim.keymap.set("n", "<leader>xd", "<cmd>TroubleToggle document_diagnostics<cr>", {silent = true, noremap = true})
-            vim.keymap.set("n", "<leader>xl", "<cmd>TroubleToggle loclist<cr>", {silent = true, noremap = true})
-            vim.keymap.set("n", "<leader>xq", "<cmd>TroubleToggle quickfix<cr>", {silent = true, noremap = true})
-            vim.keymap.set("n", "gR", "<cmd>TroubleToggle lsp_references<cr>", {silent = true, noremap = true})
+            local troubleopts = {
+                silent = true,
+                noremap = true
+            }
+
+            vim.keymap.set("n", "<leader>xx", "<cmd>TroubleToggle<cr>", troubleopts)
+            vim.keymap.set("n", "<leader>xw", "<cmd>TroubleToggle workspace_diagnostics<cr>", troubleopts)
+            vim.keymap.set("n", "<leader>xd", "<cmd>TroubleToggle document_diagnostics<cr>", troubleopts)
+            vim.keymap.set("n", "<leader>xl", "<cmd>TroubleToggle loclist<cr>", troubleopts)
+            vim.keymap.set("n", "<leader>xq", "<cmd>TroubleToggle quickfix<cr>", troubleopts)
+            vim.keymap.set("n", "gR", "<cmd>TroubleToggle lsp_references<cr>", troubleopts)
         end
     }
 
@@ -323,11 +335,10 @@ return require('packer').startup(function(use)
         config = function()
             local nvim_lsp = require 'lspconfig'
 
-            nvim_lsp.tsserver.setup{} -- typescript
-            nvim_lsp.svelte.setup{}
-            nvim_lsp.rust_analyzer.setup{}
+            nvim_lsp.tsserver.setup {} -- typescript
+            nvim_lsp.svelte.setup {}
+            nvim_lsp.rust_analyzer.setup {}
         end
     }
-
 end)
 
